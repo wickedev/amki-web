@@ -5,6 +5,11 @@ declare namespace NodeJS {
     }
 }
 
+declare module '*.proto' {
+    const src: any
+    export default src
+}
+
 declare module '*.bmp' {
     const src: string
     export default src
