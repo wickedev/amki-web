@@ -16,10 +16,17 @@
         "@types/react": "^16.9.4",
         "@types/react-dom": "^16.9.1",
         "@types/react-router-dom": "^5.1.0",
+        "@types/styled-components": "^4.1.19",
         "@types/webpack-env": "^1.14.0",
-        "@typescript-eslint/eslint-plugin": "^2.3.2",
-        "@typescript-eslint/parser": "^2.3.2",
+        "@typescript-eslint/eslint-plugin": "^2.6.1",
+        "@typescript-eslint/parser": "^2.6.1",
+        "antd": "^3.25.0",
+        "babel-eslint": "^10.0.3",
         "babel-jest": "^24.9.0",
+        "babel-plugin-auto-logger": "^1.1.1",
+        "babel-plugin-console": "https://github.com/wickedev/babel-plugin-console#v0.2.2",
+        "babel-plugin-import": "^1.12.2",
+        "babel-plugin-macros": "^2.6.1",
         "eslint": "^6.5.1",
         "eslint-config-prettier": "^6.3.0",
         "eslint-config-react-app": "^5.0.2",
@@ -34,16 +41,21 @@
         "fork-ts-checker-webpack-plugin": "^1.5.0",
         "identity-obj-proxy": "^3.0.0",
         "jest": "^24.9.0",
+        "less": "^3.10.3",
+        "less-loader": "^5.0.0",
         "prettier": "^1.18.2",
         "razzle": "^3.0.0-alpha.2",
+        "razzle-dev-utils": "^3.0.0",
+        "razzle-plugin-less": "https://github.com/wickedev/razzle-plugin-less#v3.0.1",
         "razzle-plugin-typescript": "^3.0.0",
         "react": "^16.10.1",
         "react-dom": "^16.10.1",
         "react-router-dom": "^5.1.2",
+        "styled-components": "^4.4.0",
         "ts-jest": "^24.1.0",
         "tsconfig-paths-webpack-plugin": "^3.2.0",
-        "typescript": "^3.7.0-beta",
-        "webpack-grpc-web-loader": "^0.1.6"
+        "typescript": "^3.7.2",
+        "typescript-plugin-css-modules": "^2.0.2"
     },
     "prettier": {
         "parser": "typescript",
@@ -70,31 +82,48 @@
         ]
     },
     "eslintConfig": {
-        "parser": "@typescript-eslint/parser",
-        "parserOptions": {
-            "project": "./tsconfig.json",
-            "tsconfigRootDir": "."
-        },
+        "overrides": [
+            {
+                "files": [
+                    "*.ts",
+                    "*.tsx"
+                ],
+                "parser": "@typescript-eslint/parser",
+                "parserOptions": {
+                    "project": [
+                        "tsconfig.json"
+                    ]
+                },
+                "plugins": [
+                    "@typescript-eslint"
+                ],
+                "rules": {
+                    "ban-ts-ignore": 0,
+                    "@typescript-eslint/ban-ts-ignore": 0,
+                    "@typescript-eslint/no-explicit-any": 0,
+                    "@typescript-eslint/no-non-null-assertion": 0,
+                    "@typescript-eslint/no-misused-promises": 0,
+                    "@typescript-eslint/no-var-requires": 0
+                },
+                "extends": [
+                    "react-app",
+                    "plugin:@typescript-eslint/eslint-recommended",
+                    "plugin:@typescript-eslint/recommended",
+                    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+                    "prettier",
+                    "prettier/@typescript-eslint"
+                ]
+            }
+        ],
         "plugins": [
-            "@typescript-eslint",
             "prettier"
         ],
         "rules": {
-            "prettier/prettier": "error",
-            "ban-ts-ignore": 0,
-            "@typescript-eslint/ban-ts-ignore": 0,
-            "@typescript-eslint/no-explicit-any": 0,
-            "@typescript-eslint/no-non-null-assertion": 0,
-            "@typescript-eslint/no-misused-promises": 0,
-            "@typescript-eslint/no-var-requires": 0
+            "prettier/prettier": "error"
         },
         "extends": [
             "react-app",
-            "plugin:@typescript-eslint/eslint-recommended",
-            "plugin:@typescript-eslint/recommended",
-            "plugin:@typescript-eslint/recommended-requiring-type-checking",
-            "prettier",
-            "prettier/@typescript-eslint"
+            "prettier"
         ]
     },
     "jest": {

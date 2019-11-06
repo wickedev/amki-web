@@ -5,15 +5,12 @@ declare namespace NodeJS {
     }
 }
 
-declare module '*.proto' {
-    const src: any
-    export default src
-}
-
 declare module '*.bmp' {
     const src: string
     export default src
 }
+
+declare module '*.less'
 
 declare module '*.gif' {
     const src: string
@@ -52,6 +49,11 @@ declare module '*.svg' {
 }
 
 declare module '*.module.css' {
+    const classes: { readonly [key: string]: string }
+    export default classes
+}
+
+declare module '*.module.less' {
     const classes: { readonly [key: string]: string }
     export default classes
 }
