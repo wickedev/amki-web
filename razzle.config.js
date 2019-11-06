@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
+const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin')
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder')
 const babelLoaderFinder = makeLoaderFinder('babel-loader')
 const paths = require('razzle/config/paths')
@@ -15,10 +15,8 @@ const lessOption = {
     modifyVars: { '@primary-color': '#1DA57A' },
 }
 
-// noinspection JSValidateTypes
 const tsconfigPathsPlugin = new TsconfigPathsPlugin()
 
-// noinspection JSUnusedLocalSymbols
 module.exports = {
     modify(config, { target, dev }, webpack) {
         addPlugin(tsconfigPathsPlugin)(config)
