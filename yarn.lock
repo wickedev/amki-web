@@ -2055,9 +2055,9 @@ babel-plugin-auto-logger@^1.1.1:
     "@babel/helper-plugin-utils" "7.0.0"
     "@babel/types" "7.5.5"
 
-"babel-plugin-console@https://github.com/wickedev/babel-plugin-console#v0.2.2":
+"babel-plugin-console@github:wickedev/babel-plugin-console#v0.2.2":
   version "0.2.1"
-  resolved "https://github.com/wickedev/babel-plugin-console#a79e1eb540bed7cc5a3c65a2796f8ba3b5232feb"
+  resolved "https://codeload.github.com/wickedev/babel-plugin-console/tar.gz/a79e1eb540bed7cc5a3c65a2796f8ba3b5232feb"
   dependencies:
     babel-plugin-macros "^2.0.0"
 
@@ -9394,9 +9394,9 @@ razzle-dev-utils@^3.0.0:
     sockjs-client "1.3.0"
     strip-ansi "5.0.0"
 
-"razzle-plugin-less@https://github.com/wickedev/razzle-plugin-less#v3.0.1":
+"razzle-plugin-less@github:wickedev/razzle-plugin-less#v3.0.1":
   version "3.0.0"
-  resolved "https://github.com/wickedev/razzle-plugin-less#771b4d0e24147098c9ec285b779b8768ef9cfbfc"
+  resolved "https://codeload.github.com/wickedev/razzle-plugin-less/tar.gz/771b4d0e24147098c9ec285b779b8768ef9cfbfc"
   dependencies:
     autoprefixer "^8.6.2"
     less-loader "^5.0.0"
