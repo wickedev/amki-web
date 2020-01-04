@@ -1,13 +1,13 @@
 import http from 'http'
 
 let app = require('./server').default
-
-const server = http.createServer(app)
-
 let currentApp = app
+const server = http.createServer(app)
+const port = process.env.PORT || 3000
 
-server.listen(process.env.PORT || 3000, () => {
+server.listen(port, () => {
     console.log('🚀 started')
+    console.log(`🚀 server listening on ${port}`)
 })
 
 if (module.hot) {

@@ -3,9 +3,12 @@ const fs = require('fs')
 const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin')
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder')
 const babelLoaderFinder = makeLoaderFinder('babel-loader')
+const {
+    groupInfoTemplate,
+    defaultInfoTemplate,
+} = require('babel-plugin-logger')
 const paths = require('razzle/config/paths')
 const { eslintConfig } = require('./package.json')
-
 const appDirectory = fs.realpathSync(process.cwd())
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath)
 
@@ -17,17 +20,26 @@ const lessOption = {
 
 const tsconfigPathsPlugin = new TsconfigPathsPlugin()
 
+// noinspection JSUnusedLocalSymbols
 module.exports = {
     modify(config, { target, dev }, webpack) {
         addPlugin(tsconfigPathsPlugin)(config)
-        addBabelPlugin([
-            'babel-plugin-auto-logger',
-            {
-                sourceMatcher: '.*ts(x)?$',
-            },
-        ])(config)
-        addBabelPlugin(['babel-plugin-console'])(config)
-        addBabelPlugin(['babel-plugin-macros'])(config)
+
+        if (target === 'web') {
+            addBabelPlugin([
+                'babel-plugin-logger',
+                {
+                    infoTemplate: groupInfoTemplate,
+                },
+            ])(config)
+        } else {
+            addBabelPlugin([
+                'babel-plugin-logger',
+                {
+                    infoTemplate: defaultInfoTemplate,
+                },
+            ])(config)
+        }
 
         if (target === 'web') {
             fixBabelImports('import', {
@@ -35,6 +47,13 @@ module.exports = {
                 libraryDirectory: 'es',
                 style: true,
             })(config)
+        }
+
+        if (target === 'node') {
+            const definePlugin = getPlugins(config).filter(
+                Plugin => Plugin.definitions,
+            )[0]
+            delete definePlugin.definitions['process.env.PORT']
         }
 
         return config
@@ -79,11 +98,25 @@ const getBabelLoader = config => {
     return config.module.rules
         .filter(rule => Array.isArray(rule.use))
         .flatMap(rule => rule.use)
-        .find(babelLoaderFinder)
+        .find(u => {
+            const isBabelLoader = u.loader === 'babel-loader'
+            return isBabelLoader || babelLoaderFinder(u)
+        })
+}
+
+const getPlugins = config => {
+    return config.plugins
 }
 
 const addBabelPlugin = plugin => config => {
-    const options = getBabelLoader(config).options
+    const loader = getBabelLoader(config)
+
+    if (!loader) {
+        console.error(`babel loader not exist: ${loader}`)
+        return
+    }
+
+    const options = loader.options
     options.plugins = options.plugins ? [...options.plugins, plugin] : [plugin]
     return config
 }
