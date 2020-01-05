@@ -18,13 +18,7 @@
         "paths": {
             "~/*": ["*"]
         },
-        "plugins": [
-            {
-                "name": "ts-protobuf-plugin",
-                "remove": ["caller", "callee", "getDay"]
-            },
-            { "name": "typescript-plugin-css-modules" }
-        ]
+        "plugins": [{ "name": "typescript-plugin-css-modules" }]
     },
     "include": ["src"]
 }

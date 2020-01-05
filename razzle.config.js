@@ -8,7 +8,8 @@ const {
     defaultInfoTemplate,
 } = require('babel-plugin-logger')
 const paths = require('razzle/config/paths')
-const { eslintConfig } = require('./package.json')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+const { eslintConfig, babel } = require('./package.json')
 const appDirectory = fs.realpathSync(process.cwd())
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath)
 
@@ -20,78 +21,66 @@ const lessOption = {
 
 const tsconfigPathsPlugin = new TsconfigPathsPlugin()
 
-// noinspection JSUnusedLocalSymbols
-module.exports = {
-    modify(config, { target, dev }, webpack) {
-        addPlugin(tsconfigPathsPlugin)(config)
+const typescriptPlugin = (baseConfig, { target, dev }) => {
+    const config = Object.assign({}, baseConfig)
 
-        if (target === 'web') {
-            addBabelPlugin([
-                'babel-plugin-logger',
-                {
-                    infoTemplate: groupInfoTemplate,
-                },
-            ])(config)
-        } else {
-            addBabelPlugin([
-                'babel-plugin-logger',
-                {
-                    infoTemplate: defaultInfoTemplate,
-                },
-            ])(config)
+    const babelLoader = config.module.rules.find(babelLoaderFinder)
+    if (!babelLoader) {
+        throw new Error(`'babel-loader' was erased from config'`)
+    }
+
+    config.resolve.extensions = [...config.resolve.extensions, '.ts', '.tsx']
+    addPlugin(tsconfigPathsPlugin)(config)
+    babelLoader.test = /\.(ts|tsx|js|jsx|mjs)$/
+    babelLoader.use = babelLoader.use.map(u => {
+        const plugins = []
+
+        if (u.options.plugins != null) {
+            plugins.push(...u.options.plugins)
         }
 
-        if (target === 'web') {
-            fixBabelImports('import', {
-                libraryName: 'antd',
-                libraryDirectory: 'es',
-                style: true,
-            })(config)
+        if (babel.plugins != null) {
+            plugins.push(...babel.plugins)
         }
 
-        if (target === 'node') {
-            const definePlugin = getPlugins(config).filter(
-                Plugin => Plugin.definitions,
-            )[0]
-            delete definePlugin.definitions['process.env.PORT']
-        }
-
-        return config
-    },
-    plugins: [
-        {
-            name: 'less',
+        return {
+            ...u,
             options: {
-                less: {
-                    dev: Object.assign(lessOption, {
-                        sourceMap: true,
-                    }),
-                    prod: Object.assign(lessOption, {
-                        sourceMap: false,
-                    }),
-                },
+                ...u.options,
+                ...babel,
+                plugins,
             },
-        },
-        {
-            name: 'typescript',
-            options: {
-                useBabel: true,
-                tsLoader: {
-                    transpileOnly: true,
-                    experimentalWatchApi: true,
-                },
-                forkTsChecker: {
-                    async: true,
-                    tsconfig: resolveApp('tsconfig.json'),
-                    eslint: true,
-                    eslintOptions: eslintConfig,
-                    tslint: false,
-                    watch: resolveApp('src'),
-                    typeCheck: true,
-                },
-            },
-        },
-    ],
+        }
+    })
+
+    if (target === 'web') {
+        config.plugins.push(
+            new ForkTsCheckerWebpackPlugin(
+                Object.assign(
+                    {},
+                    {
+                        async: true,
+                        tsconfig: resolveApp('tsconfig.json'),
+                        eslint: true,
+                        eslintOptions: eslintConfig,
+                        tslint: false,
+                        watch: resolveApp('src'),
+                        typeCheck: true,
+                    },
+                ),
+            ),
+        )
+        if (dev) {
+            config.output.pathinfo = false
+            config.optimization = {
+                removeAvailableModules: false,
+                removeEmptyChunks: false,
+                splitChunks: false,
+            }
+        }
+    }
+
+    return config
 }
 
 const getBabelLoader = config => {
@@ -132,4 +121,59 @@ const addPlugin = plugin => config => {
     const resolve = config.resolve
     resolve.plugins = resolve.plugins ? [...resolve.plugins, plugin] : [plugin]
     return config
+}
+
+const addBabelPluginLogger = target => {
+    const isWeb = target === 'web'
+    return addBabelPlugin([
+        'logger',
+        {
+            infoTemplate: isWeb ? groupInfoTemplate : defaultInfoTemplate,
+        },
+    ])
+}
+
+const fixBabelImportsAntD = target => config => {
+    if (target === 'web') {
+        return fixBabelImports('import', {
+            libraryName: 'antd',
+            libraryDirectory: 'es',
+            style: true,
+        })(config)
+    }
+}
+
+const removeDefinitionsOnNode = target => config => {
+    if (target === 'node') {
+        const definePlugin = getPlugins(config).filter(
+            Plugin => Plugin.definitions,
+        )[0]
+        delete definePlugin.definitions['process.env.PORT']
+    }
+}
+
+// noinspection JSUnusedLocalSymbols
+module.exports = {
+    modify(config, { target, dev }, webpack) {
+        fixBabelImportsAntD(target)(config)
+        addBabelPluginLogger(target)(config)
+        removeDefinitionsOnNode(target)(config)
+        return config
+    },
+    plugins: [
+        {
+            name: 'less',
+            options: {
+                less: {
+                    dev: Object.assign(lessOption, {
+                        sourceMap: true,
+                    }),
+                    prod: Object.assign(lessOption, {
+                        sourceMap: false,
+                    }),
+                },
+            },
+        },
+        typescriptPlugin,
+    ],
 }

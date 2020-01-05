@@ -4,6 +4,7 @@ const appDirectory = fs.realpathSync(process.cwd())
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath)
 const createConfig = require('razzle/config/createConfig')
 const paths = require('razzle/config/paths')
+const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin')
 
 module.exports = async ({ config, mode }) => {
     let razzle = {}
@@ -36,6 +37,7 @@ module.exports = async ({ config, mode }) => {
         .filter(rules => !rules.loader || !rules.loader.includes('file-loader'))
 
     config.resolve.extensions.push('.ts', '.tsx')
+    config.resolve.plugins = [new TsconfigPathsPlugin()]
 
     return {
         ...config,
