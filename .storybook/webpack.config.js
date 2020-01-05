@@ -37,11 +37,25 @@ module.exports = async ({ config, mode }) => {
         .filter(rules => !rules.loader || !rules.loader.includes('file-loader'))
 
     config.resolve.extensions.push('.ts', '.tsx')
-    config.resolve.plugins = [new TsconfigPathsPlugin()]
+
+    if (!config.resolve.plugins) {
+        config.resolve.plugins = []
+    }
+
+    config.resolve.plugins.push(new TsconfigPathsPlugin())
 
     for (const rule of rules) {
         if (!rule.use) {
             continue
+        }
+
+        if (rule.test.toString().includes('tsx')) {
+            rule.use.push({
+                loader: 'react-docgen-typescript-loader',
+                options: {
+                    tsconfigPath: resolveApp('tsconfig.json')
+                }
+            })
         }
 
         rule.use = rule.use.filter(
@@ -53,9 +67,11 @@ module.exports = async ({ config, mode }) => {
         )
     }
 
+    console.log(rules)
+
     Object.assign(config.performance, {
         maxEntrypointSize: 2_000_000,
-        maxAssetSize: 2_000_000
+        maxAssetSize: 2_000_000,
     })
 
     return {
