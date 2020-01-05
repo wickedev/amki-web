@@ -10,6 +10,8 @@ coverage
 node_modules
 build
 screenshot
+storybook-static
+
 .env.local
 .env.development.local
 .env.test.local

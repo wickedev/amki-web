@@ -39,6 +39,25 @@ module.exports = async ({ config, mode }) => {
     config.resolve.extensions.push('.ts', '.tsx')
     config.resolve.plugins = [new TsconfigPathsPlugin()]
 
+    for (const rule of rules) {
+        if (!rule.use) {
+            continue
+        }
+
+        rule.use = rule.use.filter(
+            u =>
+                !(
+                    typeof u === 'string' &&
+                    u.includes('mini-css-extract-plugin')
+                ),
+        )
+    }
+
+    Object.assign(config.performance, {
+        maxEntrypointSize: 2_000_000,
+        maxAssetSize: 2_000_000
+    })
+
     return {
         ...config,
         module: {
