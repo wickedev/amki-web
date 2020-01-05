@@ -9,12 +9,15 @@
         "connect": "sh connect.sh",
         "lint": "eslint --ext .ts,.tsx src/",
         "test": "razzle test --env=jsdom",
+        "e2e": "jest e2e -c e2e/jest.config.js",
         "start:prod": "NODE_ENV=production node build/server.js",
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook"
     },
     "dependencies": {
+        "@babel/runtime": "^7.7.7",
         "antd": "^3.26.6",
+        "core-js": "3",
         "express": "^4.17.1",
         "react": "^16.11.0",
         "react-dom": "^16.11.0",
@@ -22,6 +25,8 @@
     },
     "devDependencies": {
         "@babel/core": "^7.7.7",
+        "@babel/plugin-syntax-optional-chaining": "^7.7.4",
+        "@babel/plugin-transform-runtime": "^7.7.6",
         "@babel/preset-env": "^7.7.7",
         "@babel/preset-react": "^7.7.4",
         "@babel/preset-typescript": "^7.7.7",
@@ -30,8 +35,10 @@
         "@storybook/addons": "^5.2.8",
         "@storybook/react": "^5.2.8",
         "@types/express": "^4.17.2",
+        "@types/fs-extra": "^8.0.1",
         "@types/jest": "^24.0.25",
         "@types/node": "^13.1.4",
+        "@types/puppeteer": "^2.0.0",
         "@types/react": "^16.9.11",
         "@types/react-dom": "^16.9.4",
         "@types/react-router-dom": "^5.1.2",
@@ -56,11 +63,14 @@
         "eslint-plugin-react": "^7.16.0",
         "eslint-plugin-react-hooks": "^2.2.0",
         "fork-ts-checker-webpack-plugin": "^3.1.0",
+        "fs-extra": "^8.1.0",
         "identity-obj-proxy": "^3.0.0",
         "jest": "^24.9.0",
+        "jest-puppeteer": "^4.4.0",
         "less": "^3.10.3",
         "less-loader": "^5.0.0",
         "prettier": "^1.19.0",
+        "puppeteer": "^2.0.0",
         "razzle": "^3.0.0",
         "razzle-dev-utils": "^3.0.0",
         "razzle-plugin-less": "github:wickedev/razzle-plugin-less#v3.0.1",
@@ -146,7 +156,7 @@
             "^.+\\.(ts|tsx|js|jsx|mjs)$": "babel-jest"
         },
         "moduleNameMapper": {
-            "^.+\\.(css|json)$": "identity-obj-proxy",
+            "^.+\\.(css)$": "identity-obj-proxy",
             "^~/(.*)$": "<rootDir>/src/$1"
         }
     },
@@ -159,9 +169,26 @@
                     "allExtensions": true
                 }
             ],
-            "@babel/preset-env",
-            "@babel/preset-react"
+            [
+                "@babel/preset-env",
+                {
+                    "useBuiltIns": "entry",
+                    "corejs": {
+                        "version": 3,
+                        "proposals": true
+                    }
+                }
+            ],
+            [
+                "@babel/preset-react"
+            ]
         ],
-        "plugins": []
+        "plugins": [
+            "@babel/transform-runtime",
+            "@babel/plugin-syntax-optional-chaining"
+        ]
+    },
+    "puppeteer": {
+        "chromium_revision": "706915"
     }
 }
