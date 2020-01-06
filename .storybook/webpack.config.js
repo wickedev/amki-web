@@ -6,7 +6,7 @@ const createConfig = require('razzle/config/createConfig')
 const paths = require('razzle/config/paths')
 const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin')
 
-module.exports = async ({ config, mode }) => {
+const createRazzleConfig = mode => {
     let razzle = {}
 
     if (fs.existsSync(paths.appRazzleConfig)) {
@@ -20,7 +20,7 @@ module.exports = async ({ config, mode }) => {
     const env = mode === 'DEVELOPMENT' ? 'dev' : 'prod'
     const razzleConfig = createConfig('web', env, razzle, null)
 
-    const rules = razzleConfig.module.rules
+    razzleConfig.module.rules = razzleConfig.module.rules
         .map(rule => {
             const include = isIterable(rule.include)
                 ? [...rule.include, resolveApp('stories')]
@@ -36,6 +36,12 @@ module.exports = async ({ config, mode }) => {
         })
         .filter(rules => !rules.loader || !rules.loader.includes('file-loader'))
 
+    return razzleConfig
+}
+
+module.exports = async ({ config, mode }) => {
+    const razzleConfig = createRazzleConfig(mode)
+
     config.resolve.extensions.push('.ts', '.tsx')
 
     if (!config.resolve.plugins) {
@@ -43,6 +49,8 @@ module.exports = async ({ config, mode }) => {
     }
 
     config.resolve.plugins.push(new TsconfigPathsPlugin())
+
+    const rules = razzleConfig.module.rules
 
     for (const rule of rules) {
         if (!rule.use) {
@@ -53,8 +61,8 @@ module.exports = async ({ config, mode }) => {
             rule.use.push({
                 loader: 'react-docgen-typescript-loader',
                 options: {
-                    tsconfigPath: resolveApp('tsconfig.json')
-                }
+                    tsconfigPath: resolveApp('tsconfig.json'),
+                },
             })
         }
 
@@ -66,8 +74,6 @@ module.exports = async ({ config, mode }) => {
                 ),
         )
     }
-
-    console.log(rules)
 
     Object.assign(config.performance, {
         maxEntrypointSize: 2_000_000,

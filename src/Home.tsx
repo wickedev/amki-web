@@ -27,7 +27,7 @@ export const Home: React.FC = () => {
                 <div
                     style={{ background: '#fff', padding: 24, minHeight: 280 }}
                 >
-                    Content
+                    Content?
                 </div>
             </Content>
             <Footer style={{ textAlign: 'center' }}>
