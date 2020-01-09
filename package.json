@@ -5,7 +5,6 @@
     "scripts": {
         "start": "razzle start",
         "build": "razzle build",
-        "build:image": "cross-var docker build --tag $npm_package_name:$npm_package_version .",
         "dev": "devspace dev --no-warn",
         "purge": "devspace purge",
         "staging": "devspace deploy -p staging -n amki-staging",
@@ -19,16 +18,7 @@
         "start-storybook": "serve storybook-static"
     },
     "dependencies": {
-        "@babel/runtime": "^7.7.7",
-        "antd": "^3.26.6",
-        "core-js": "3",
-        "express": "^4.17.1",
-        "pg": "^7.17.0",
-        "razzle-dev-utils": "^3.0.0",
-        "react": "^16.11.0",
-        "react-dom": "^16.11.0",
-        "react-router-dom": "^5.1.2",
-        "typeorm": "^0.2.22"
+        "pg": "^7.17.0"
     },
     "devDependencies": {
         "@babel/core": "^7.7.7",
@@ -39,6 +29,7 @@
         "@babel/preset-env": "^7.7.7",
         "@babel/preset-react": "^7.7.4",
         "@babel/preset-typescript": "^7.7.7",
+        "@babel/runtime": "^7.7.7",
         "@storybook/addon-actions": "^5.2.8",
         "@storybook/addon-info": "^5.2.8",
         "@storybook/addon-links": "^5.2.8",
@@ -57,12 +48,14 @@
         "@types/webpack-env": "^1.15.0",
         "@typescript-eslint/eslint-plugin": "^2.14.0",
         "@typescript-eslint/parser": "^2.14.0",
+        "antd": "^3.26.6",
         "babel-eslint": "^10.0.3",
         "babel-jest": "^24.9.0",
         "babel-loader": "^8.0.6",
         "babel-plugin-import": "^1.12.2",
         "babel-plugin-logger": "^0.22.0",
         "babel-plugin-transform-typescript-metadata": "^0.2.2",
+        "core-js": "3",
         "cross-var": "^1.1.0",
         "eslint": "^6.6.0",
         "eslint-config-prettier": "^6.9.0",
@@ -74,6 +67,7 @@
         "eslint-plugin-prettier": "^3.1.1",
         "eslint-plugin-react": "^7.16.0",
         "eslint-plugin-react-hooks": "^2.2.0",
+        "express": "^4.17.1",
         "fork-ts-checker-webpack-plugin": "^3.1.0",
         "fs-extra": "^8.1.0",
         "identity-obj-proxy": "^3.0.0",
@@ -84,11 +78,16 @@
         "prettier": "^1.19.0",
         "puppeteer": "^2.0.0",
         "razzle": "^3.0.0",
+        "razzle-dev-utils": "^3.0.0",
         "razzle-plugin-less": "github:wickedev/razzle-plugin-less#v3.0.1",
+        "react": "^16.11.0",
         "react-docgen-typescript-loader": "^3.6.0",
+        "react-dom": "^16.11.0",
+        "react-router-dom": "^5.1.2",
         "serve": "^11.3.0",
         "styled-components": "^4.4.1",
         "tsconfig-paths-webpack-plugin": "^3.2.0",
+        "typeorm": "^0.2.22",
         "typescript": "^3.7.2",
         "typescript-plugin-css-modules": "^2.0.2"
     },
@@ -99,7 +98,11 @@
         "singleQuote": true,
         "overrides": [
             {
-                "files": ["*.css", "*.scss", "*.sass"],
+                "files": [
+                    "*.css",
+                    "*.scss",
+                    "*.sass"
+                ],
                 "options": {
                     "parser": "scss"
                 }
@@ -123,12 +126,17 @@
         "root": true,
         "overrides": [
             {
-                "files": ["*.ts", "*.tsx"],
+                "files": [
+                    "*.ts",
+                    "*.tsx"
+                ],
                 "parser": "@typescript-eslint/parser",
                 "parserOptions": {
                     "ecmaVersion": 6
                 },
-                "plugins": ["@typescript-eslint"],
+                "plugins": [
+                    "@typescript-eslint"
+                ],
                 "rules": {},
                 "extends": [
                     "react-app",
@@ -137,15 +145,27 @@
                 ]
             }
         ],
-        "plugins": ["prettier"],
+        "plugins": [
+            "prettier"
+        ],
         "rules": {
             "prettier/prettier": "error"
         },
-        "extends": ["react-app", "prettier"]
+        "extends": [
+            "react-app",
+            "prettier"
+        ]
     },
     "jest": {
-        "collectCoverageFrom": ["src/**/*.{js,jsx,ts,tsx}"],
-        "moduleFileExtensions": ["js", "jsx", "ts", "tsx"],
+        "collectCoverageFrom": [
+            "src/**/*.{js,jsx,ts,tsx}"
+        ],
+        "moduleFileExtensions": [
+            "js",
+            "jsx",
+            "ts",
+            "tsx"
+        ],
         "testMatch": [
             "<rootDir>/src/**/?(*.)(spec|test).(j|t)s?(x)",
             "<rootDir>/src/**/__tests__/**/*.(j|t)s?(x)"
@@ -170,6 +190,9 @@
             [
                 "@babel/preset-env",
                 {
+                    "targets": {
+                        "node": "8"
+                    },
                     "useBuiltIns": "entry",
                     "corejs": {
                         "version": 3,
@@ -177,12 +200,18 @@
                     }
                 }
             ],
-            ["@babel/preset-react"]
+            [
+                "@babel/preset-react"
+            ]
         ],
         "plugins": [
             "babel-plugin-transform-typescript-metadata",
-            ["@babel/transform-runtime"],
-            ["@babel/plugin-syntax-optional-chaining"],
+            [
+                "@babel/transform-runtime"
+            ],
+            [
+                "@babel/plugin-syntax-optional-chaining"
+            ],
             [
                 "@babel/plugin-proposal-decorators",
                 {

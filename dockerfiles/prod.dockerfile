@@ -9,7 +9,7 @@ RUN yarn
 RUN yarn build
 
 # Deploy
-FROM node:alpine
+FROM node:lts-alpine
 ENV NODE_ENV production
 RUN mkdir /app
 WORKDIR /app

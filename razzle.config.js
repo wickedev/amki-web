@@ -155,6 +155,9 @@ const removeDefinitionsOnNode = target => config => {
 // noinspection JSUnusedLocalSymbols
 module.exports = {
     modify(config, { target, dev }, webpack) {
+        if (target === 'node') {
+            config.externals = ['pg-native']
+        }
         fixBabelImportsAntD(target)(config)
         addBabelPluginLogger(target)(config)
         removeDefinitionsOnNode(target)(config)
