@@ -1,0 +1,16 @@
+replicas: 1
+containers:
+  - name: amki-web
+    image: dscr.io/${DEVSPACE_USERNAME}/amki-web
+    env:
+      - name: DB_NAME
+        value: 'amki'
+      - name: DB_PASSWORD
+        value: 'YW1raXBhc3MK'
+    resources:
+      limits:
+        cpu: '200m'
+        memory: '300Mi'
+postgresql:
+  postgresqlDatabase: postgres
+  postgresqlPassword: postgres

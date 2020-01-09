@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amki-web
+spec:
+  replicas: {{ .Values.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: amki-web
+  template:
+    metadata:
+      name: amki-web
+      labels:
+        app: amki-web
+    spec:
+      containers:
+        {{- range $containerIndex, $container := .Values.containers }}
+        - name: {{ $container.name | default "container" | quote }}
+          image: {{ $container.image | quote }}
+          env:
+{{ toYaml $container.env | indent 12 }}
+          {{- if $container.resources }}
+          resources:
+            {{- with $container.resources.limits }}
+            limits:
+              cpu: {{ .cpu | quote }}
+              memory: {{ .memory | quote }}
+            {{- end }}
+          {{- end }}
+        {{- end }}

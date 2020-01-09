@@ -16,3 +16,9 @@ storybook-static
 .env.development.local
 .env.test.local
 .env.production.local
+
+
+# Ignore DevSpace cache and log folder
+.devspace/
+!chart/**/*
+.env

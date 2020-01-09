@@ -1,5 +1,5 @@
 apiVersion: v2
-name: amki-web
+name: chart
 description: Amki web front
 type: application
 version: 0.1.0

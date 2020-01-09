@@ -9,6 +9,8 @@ import path from 'path'
 import { getUserRepository } from '~/repositories/user-repository'
 import { UserRouter } from '~/routers/user-routers'
 
+console.log(process.env)
+
 const port = process.env.PORT || 3000
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST!)
 const RAZZLE_PUBLIC_DIR = path.join(__dirname, 'public')
@@ -79,6 +81,8 @@ export class Application {
     }
 
     public reset() {
-        this.server!.removeListener('request', this.app)
+        if (this.server) {
+            this.server!.removeListener('request', this.app)
+        }
     }
 }

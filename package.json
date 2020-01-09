@@ -6,7 +6,10 @@
         "start": "razzle start",
         "build": "razzle build",
         "build:image": "cross-var docker build --tag $npm_package_name:$npm_package_version .",
-        "connect": "sh scripts/connect.sh",
+        "dev": "devspace dev --no-warn",
+        "purge": "devspace purge",
+        "staging": "devspace deploy -p staging -n amki-staging",
+        "deploy": "devspace deploy -p production -n amki-prod",
         "lint": "eslint --ext .ts,.tsx src/",
         "test": "razzle test --env=jsdom",
         "e2e": "jest e2e -c e2e/jest.config.js",
@@ -21,6 +24,7 @@
         "core-js": "3",
         "express": "^4.17.1",
         "pg": "^7.17.0",
+        "razzle-dev-utils": "^3.0.0",
         "react": "^16.11.0",
         "react-dom": "^16.11.0",
         "react-router-dom": "^5.1.2",
@@ -80,7 +84,6 @@
         "prettier": "^1.19.0",
         "puppeteer": "^2.0.0",
         "razzle": "^3.0.0",
-        "razzle-dev-utils": "^3.0.0",
         "razzle-plugin-less": "github:wickedev/razzle-plugin-less#v3.0.1",
         "react-docgen-typescript-loader": "^3.6.0",
         "serve": "^11.3.0",
@@ -96,11 +99,7 @@
         "singleQuote": true,
         "overrides": [
             {
-                "files": [
-                    "*.css",
-                    "*.scss",
-                    "*.sass"
-                ],
+                "files": ["*.css", "*.scss", "*.sass"],
                 "options": {
                     "parser": "scss"
                 }
@@ -110,6 +109,13 @@
                 "options": {
                     "parser": "json"
                 }
+            },
+            {
+                "files": "*.yaml",
+                "options": {
+                    "parser": "yaml",
+                    "tabWidth": 2
+                }
             }
         ]
     },
@@ -117,17 +123,12 @@
         "root": true,
         "overrides": [
             {
-                "files": [
-                    "*.ts",
-                    "*.tsx"
-                ],
+                "files": ["*.ts", "*.tsx"],
                 "parser": "@typescript-eslint/parser",
                 "parserOptions": {
                     "ecmaVersion": 6
                 },
-                "plugins": [
-                    "@typescript-eslint"
-                ],
+                "plugins": ["@typescript-eslint"],
                 "rules": {},
                 "extends": [
                     "react-app",
@@ -136,27 +137,15 @@
                 ]
             }
         ],
-        "plugins": [
-            "prettier"
-        ],
+        "plugins": ["prettier"],
         "rules": {
             "prettier/prettier": "error"
         },
-        "extends": [
-            "react-app",
-            "prettier"
-        ]
+        "extends": ["react-app", "prettier"]
     },
     "jest": {
-        "collectCoverageFrom": [
-            "src/**/*.{js,jsx,ts,tsx}"
-        ],
-        "moduleFileExtensions": [
-            "js",
-            "jsx",
-            "ts",
-            "tsx"
-        ],
+        "collectCoverageFrom": ["src/**/*.{js,jsx,ts,tsx}"],
+        "moduleFileExtensions": ["js", "jsx", "ts", "tsx"],
         "testMatch": [
             "<rootDir>/src/**/?(*.)(spec|test).(j|t)s?(x)",
             "<rootDir>/src/**/__tests__/**/*.(j|t)s?(x)"
@@ -188,18 +177,12 @@
                     }
                 }
             ],
-            [
-                "@babel/preset-react"
-            ]
+            ["@babel/preset-react"]
         ],
         "plugins": [
             "babel-plugin-transform-typescript-metadata",
-            [
-                "@babel/transform-runtime"
-            ],
-            [
-                "@babel/plugin-syntax-optional-chaining"
-            ],
+            ["@babel/transform-runtime"],
+            ["@babel/plugin-syntax-optional-chaining"],
             [
                 "@babel/plugin-proposal-decorators",
                 {

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { Request, Response } from 'express-serve-static-core'
 import { Repository } from 'typeorm/repository/Repository'
-import { User } from '~/models/entities/User'
+import { User } from '~/models/entities/user'
 
 export class UserRouter {
     public router: Router = Router()

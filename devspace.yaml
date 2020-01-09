@@ -1,0 +1,57 @@
+version: v1beta6
+images:
+  default:
+    image: dscr.io/${DEVSPACE_USERNAME}/amki-web
+    dockerfile: ./dockerfiles/dev.dockerfile
+deployments:
+  - name: amki-web
+    helm:
+      wait: true
+      chart:
+        name: ./chart
+      values:
+        containers:
+          - image: dscr.io/${DEVSPACE_USERNAME}/amki-web
+            env:
+              - name: DB_NAME
+                value: 'amki'
+              - name: DB_PASSWORD
+                value: 'YW1raXBhc3MK'
+        service:
+          ports:
+            - port: 3000
+        postgresql:
+          postgresqlDatabase: amki
+          postgresqlPassword: YW1raXBhc3MK
+dev:
+  ports:
+    - imageName: default
+      forward:
+        - port: 3000
+        - port: 3001
+  open:
+    - url: http://localhost:3000
+  sync:
+    - imageName: default
+      excludePaths:
+        - dockerfiles/
+        - node_modules/
+        - devspace.yaml
+profiles:
+  - name: staging
+    replace:
+      images:
+        default:
+          image: dscr.io/${DEVSPACE_USERNAME}/amki-web
+          dockerfile: ./dockerfiles/prod.dockerfile
+  - name: production
+    replace:
+      images:
+        default:
+          image: dscr.io/${DEVSPACE_USERNAME}/amki-web
+          dockerfile: ./dockerfiles/prod.dockerfile
+    patches:
+      - op: add
+        path: deployments[0].helm.values.replicas
+        value: 3
+
